@@ -35,3 +35,13 @@ def test_get_reward_is_deterministic():
     reward_a = get_reward(action=0, true_values=true_values, rng=np.random.default_rng(1))
     reward_b = get_reward(action=0, true_values=true_values, rng=np.random.default_rng(1))
     assert reward_a == reward_b
+
+def test_get_reward_avarages_close_to_true_value():
+    true_values = np.array([5.0])
+    rng = np.random.default_rng(7)
+
+    samples = [get_reward(action=0, true_values=true_values, rng=rng) for _ in range(10_000)]
+
+    mean = np.mean(samples)
+    
+    assert abs(mean - 5.0) < 0.1
