@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from tools.toolkit import update_estimate, true_action_values, get_reward
+from tools.toolkit import update_estimate, true_action_values, get_reward, epsilon_greedy_action
 
 def test_update_estimate_first_reward():
     new_estimate = update_estimate(reward=1, n=1, q_old=0)
@@ -45,3 +45,20 @@ def test_get_reward_avarages_close_to_true_value():
     mean = np.mean(samples)
     
     assert abs(mean - 5.0) < 0.1
+
+
+def test_epsilon_greedy_action_always_exploit():
+    q_estimates = np.array([4.0, 5.0])
+
+    rng = np.random.default_rng(7)
+    idx = epsilon_greedy_action(q_estimates=q_estimates, epsilon=0, rng=rng)
+
+    assert idx == 1
+
+def test_epsilon_greedy_action_always_exploring():
+    q_estimates = np.array([4.0, 5.0])
+    
+    rng = np.random.default_rng(7)
+    idx = epsilon_greedy_action(q_estimates=q_estimates, epsilon=1, rng=rng)
+    
+    assert 0 <= idx < len(q_estimates)
